@@ -109,7 +109,6 @@ def get_cves(tt_filter:Time_Type) -> dict:
     }
 
     r = requests.get(CIRCL_LU_URL, params=params)
-    print(r.json())
 
     return r.json()
 
@@ -205,7 +204,8 @@ def generate_new_cve_message(cve_data: dict) -> str:
     ''' Generate new CVE message for sending to slack '''
 
     message = f"🚨  *{cve_data['id']}*  🚨\n"
-    message += f"🔮  *CVSS*: {cve_data['metrics']}\n"
+    for cvssVersion in cve_data['metrics'].keys():
+        message += f"🔮  *CVSS{cve_data['metrics'][cvssVersion][0]['cvssData']['version']}*: {cve_data['metrics'][cvssVersion][0]['cvssData']['baseScore']}\n"
     message += f"📅  *Published*: {cve_data['published']}\n"
     message += "📓  *Summary*: " 
     message += cve_data['descriptions'][0]['value'] if len(cve_data['descriptions'][0]['value']) < 500 else cve_data['descriptions'][0]['value'][:500] + "..."
