@@ -8,7 +8,7 @@ import vulners
 
 from os.path import join
 from enum import Enum
-from discord import Webhook, RequestsWebhookAdapter
+#from discord import Webhook, RequestsWebhookAdapter
 
 
 #CIRCL_LU_URL = "https://app.opencve.io/api/cve"
@@ -312,7 +312,7 @@ def send_telegram_message(message: str, public_expls_msg: str):
         if not resp['ok']:
             print("ERROR SENDING TO TELEGRAM: "+ message.split("\n")[0] + resp["description"])
 
-            
+"""            
 def send_discord_message(message: str, public_expls_msg: str):
     ''' Send a message to the discord channel webhook '''
 
@@ -331,7 +331,7 @@ def send_discord_message(message: str, public_expls_msg: str):
         message = message + "\n" + public_expls_msg
     
     webhook.send(message)
-
+"""
 def send_pushover_message(message: str, public_expls_msg: str):
     ''' Send a message to the pushover device '''
 
@@ -416,7 +416,7 @@ def main():
         public_expls_msg = generate_public_expls_message(public_exploits)
         send_slack_mesage(cve_message, public_expls_msg)
         send_telegram_message(cve_message, public_expls_msg)
-        send_discord_message(cve_message, public_expls_msg)
+        #send_discord_message(cve_message, public_expls_msg)
         send_pushover_message(cve_message, public_expls_msg)
         send_ntfy_message(cve_message, public_expls_msg)
 
