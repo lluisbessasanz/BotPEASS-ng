@@ -109,6 +109,7 @@ def get_cves(tt_filter:Time_Type) -> dict:
     }
 
     r = requests.get(CIRCL_LU_URL, params=params)
+    print(r.json())
 
     return r.json()
 
@@ -155,7 +156,7 @@ def filter_cves(cves: list, last_time: datetime.datetime, tt_filter: Time_Type) 
         cve_time = datetime.datetime.strptime(cve['cve'][tt_filter.value], TIME_FORMAT)
         if cve_time > last_time:
             if ALL_VALID or is_summ_keyword_present(cve['cve']['descriptions'][0]['value']) or \
-                is_prod_keyword_present(cve['cve'].get('configurations',[]).get('nodes',[])):
+                is_prod_keyword_present(cve['cve'].get('configurations',[{}])[0].get('nodes',[])):
                 
                 filtered_cves.append(cve)
 

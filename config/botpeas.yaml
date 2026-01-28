@@ -2,10 +2,7 @@ ALL_VALID: no
 
 DESCRIPTION_KEYWORDS_I:
 - docker
-#- kubernetes
 - lxc
-#- container
-#- linux
 - windows
 - cryptpad
 - headscale
