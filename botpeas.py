@@ -87,7 +87,7 @@ def update_lasttimes():
 
 def get_cves(tt_filter:Time_Type) -> dict:
     ''' Given the headers for the API retrive CVEs from cve.circl.lu '''
-    start = datetime.datetime.now() - datetime.timedelta(days=7)
+    start = datetime.datetime.now() - datetime.timedelta(days=10)
     start_str = start.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
     end = datetime.datetime.now()
     end_str = end.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
@@ -109,7 +109,6 @@ def get_cves(tt_filter:Time_Type) -> dict:
     }
 
     r = requests.get(CIRCL_LU_URL, params=params)
-    print(r.json())
 
     return r.json()
 
@@ -151,13 +150,15 @@ def filter_cves(cves: list, last_time: datetime.datetime, tt_filter: Time_Type) 
 
     filtered_cves = []
     new_last_time = last_time
+    print(len(cves))
 
     for cve in cves:
         cve_time = datetime.datetime.strptime(cve['cve'][tt_filter.value], TIME_FORMAT)
         if cve_time > last_time:
-            if ALL_VALID or is_summ_keyword_present(cve['cve']['descriptions'][0]['value']) or \
-                is_prod_keyword_present(cve['cve'].get('configurations',[{}])[0].get('nodes',[])):
-                
+            if not cve.get('configurations', []) and is_summ_keyword_present(cve['cve']['descriptions'][0]['value']):
+                filtered_cves.append(cve)
+
+            elif is_prod_keyword_present(cve['cve'].get('configurations',[{}])[0].get('nodes',[])):
                 filtered_cves.append(cve)
 
         if cve_time > new_last_time:
@@ -209,6 +210,11 @@ def generate_new_cve_message(cve_data: dict) -> str:
     ''' Generate new CVE message for sending to slack '''
 
     message = f"🚨  *{cve_data['id']}*  🚨\n"
+    message += "💀  Affected products  💀\n"
+    for node in cve_data.get('configurations',[{}])[0].get('nodes',[]):
+        for cpe in node['cpeMatch']:
+            message += f"{' Version: '.join(cpe['criteria'].split(':')[4:6])}\n"
+            
     for cvssVersion in cve_data['metrics'].keys():
         message += f"🔮  *CVSS{cve_data['metrics'][cvssVersion][0]['cvssData']['version']}*: {cve_data['metrics'][cvssVersion][0]['cvssData']['baseScore']}\n"
     message += f"📅  *Published*: {cve_data['published']}\n"

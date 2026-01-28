@@ -3,11 +3,12 @@ ALL_VALID: no
 DESCRIPTION_KEYWORDS_I:
 - docker
 - lxc
+- linux
 - windows
 - cryptpad
 - headscale
 - firefox
-- obs
+- 'OBS Studio'
 - keepassxc
 - syncthing
 - ubuntu
@@ -15,6 +16,8 @@ DESCRIPTION_KEYWORDS_I:
 - debian
 - proxmox
 - tor
+- kvm
+- qemu
 
 #- privilege escalation
 #- escalation
@@ -42,7 +45,6 @@ PRODUCT_KEYWORDS_I:
 - docker
 - kubernetes
 - lxc
-- container
 - linux
 - windows
 - cryptpad
@@ -56,6 +58,8 @@ PRODUCT_KEYWORDS_I:
 - debian
 - proxmox
 - tor
+- kvm
+- qemu
 
 
 PRODUCT_KEYWORDS:
