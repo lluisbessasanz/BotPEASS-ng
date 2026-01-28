@@ -1,14 +1,11 @@
 ALL_VALID: no
 
 DESCRIPTION_KEYWORDS_I:
-- docker
 - lxc
-- linux
-- windows
 - cryptpad
 - headscale
 - firefox
-- 'OBS Studio'
+- obs
 - keepassxc
 - syncthing
 - ubuntu
@@ -45,8 +42,6 @@ PRODUCT_KEYWORDS_I:
 - docker
 - kubernetes
 - lxc
-- linux
-- windows
 - cryptpad
 - headscale
 - firefox

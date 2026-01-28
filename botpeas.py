@@ -5,6 +5,7 @@ import json
 import os
 import yaml
 import vulners
+import re
 
 from os.path import join
 from enum import Enum
@@ -150,14 +151,13 @@ def filter_cves(cves: list, last_time: datetime.datetime, tt_filter: Time_Type) 
 
     filtered_cves = []
     new_last_time = last_time
-    print(len(cves))
 
     for cve in cves:
         cve_time = datetime.datetime.strptime(cve['cve'][tt_filter.value], TIME_FORMAT)
         if cve_time > last_time:
-            if not cve.get('configurations', []) and is_summ_keyword_present(cve['cve']['descriptions'][0]['value']):
+            configs = cve.get('configurations')
+            if configs is None and is_summ_keyword_present(cve['cve']['descriptions'][0]['value']):
                 filtered_cves.append(cve)
-
             elif is_prod_keyword_present(cve['cve'].get('configurations',[{}])[0].get('nodes',[])):
                 filtered_cves.append(cve)
 
@@ -169,9 +169,10 @@ def filter_cves(cves: list, last_time: datetime.datetime, tt_filter: Time_Type) 
 
 def is_summ_keyword_present(summary: str):
     ''' Given the summary check if any keyword is present '''
-
-    return any(w in summary for w in DESCRIPTION_KEYWORDS) or \
-            any(w.lower() in summary.lower() for w in DESCRIPTION_KEYWORDS_I)
+    words = re.findall(r"[A-Za-z0-9]+", summary)
+    words_lower = re.findall(r"[a-z0-9]+", summary.lower())
+    return any(w in words for w in DESCRIPTION_KEYWORDS) or \
+            any(w.lower() in words_lower for w in DESCRIPTION_KEYWORDS_I)
 
 
 def is_prod_keyword_present(nodes: list):
@@ -210,7 +211,8 @@ def generate_new_cve_message(cve_data: dict) -> str:
     ''' Generate new CVE message for sending to slack '''
 
     message = f"🚨  *{cve_data['id']}*  🚨\n"
-    if cve.get('configurations', []):
+    configs = cve_data.get('configurations')
+    if configs is not None:
         message += "💀  Affected products  💀\n"
         for node in cve_data.get('configurations',[{}])[0].get('nodes',[]):
             for cpe in node['cpeMatch']:
@@ -222,6 +224,7 @@ def generate_new_cve_message(cve_data: dict) -> str:
     message += "📓  *Summary*: " 
     message += cve_data['descriptions'][0]['value'] if len(cve_data['descriptions'][0]['value']) < 500 else cve_data['descriptions'][0]['value'][:500] + "..."
     
+    print(message)
     #if cve_data["vulnerable_configuration"]:
     #    message += f"\n🔓  *Vulnerable* (_limit to 10_): " + ", ".join(cve_data["vulnerable_configuration"][:10])
     
