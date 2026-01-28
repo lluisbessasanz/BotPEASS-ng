@@ -27,12 +27,15 @@ PRODUCT_KEYWORDS_I:
 - docker
 - kubernetes
 - lxc
-- podman
 - container
 - linux
 - windows
-- macos
-
+- cryptpad
+- headscale
+- firefox
+- obs
+- keepassxc
+- syncthing
 
 PRODUCT_KEYWORDS:
 - ThisIsACaseSensitiveExample
