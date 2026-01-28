@@ -210,10 +210,11 @@ def generate_new_cve_message(cve_data: dict) -> str:
     ''' Generate new CVE message for sending to slack '''
 
     message = f"🚨  *{cve_data['id']}*  🚨\n"
-    message += "💀  Affected products  💀\n"
-    for node in cve_data.get('configurations',[{}])[0].get('nodes',[]):
-        for cpe in node['cpeMatch']:
-            message += f"{' Version: '.join(cpe['criteria'].split(':')[4:6])}\n"
+    if cve.get('configurations', []):
+        message += "💀  Affected products  💀\n"
+        for node in cve_data.get('configurations',[{}])[0].get('nodes',[]):
+            for cpe in node['cpeMatch']:
+                message += f"{' Version: '.join(cpe['criteria'].split(':')[4:6])}\n"
             
     for cvssVersion in cve_data['metrics'].keys():
         message += f"🔮  *CVSS{cve_data['metrics'][cvssVersion][0]['cvssData']['version']}*: {cve_data['metrics'][cvssVersion][0]['cvssData']['baseScore']}\n"
