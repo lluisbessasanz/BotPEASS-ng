@@ -1,6 +1,24 @@
 ALL_VALID: no
 
 DESCRIPTION_KEYWORDS_I:
+- docker
+#- kubernetes
+- lxc
+#- container
+#- linux
+- windows
+- cryptpad
+- headscale
+- firefox
+- obs
+- keepassxc
+- syncthing
+- ubuntu
+- qubesos
+- debian
+- proxmox
+- tor
+
 #- privilege escalation
 #- escalation
 #- privesc
@@ -18,6 +36,7 @@ DESCRIPTION_KEYWORDS_I:
 #- kubernetes
 #- " lxc "
 #- podman
+
 
 DESCRIPTION_KEYWORDS:
 - ThisIsACaseSensitiveExample
