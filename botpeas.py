@@ -11,7 +11,6 @@ from enum import Enum
 #from discord import Webhook, RequestsWebhookAdapter
 
 
-#CIRCL_LU_URL = "https://app.opencve.io/api/cve"
 CIRCL_LU_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0"
 CVES_JSON_PATH = join(pathlib.Path(__file__).parent.absolute(), "output/botpeas.json")
 LAST_NEW_CVE = datetime.datetime.now() - datetime.timedelta(days=1)
@@ -88,7 +87,7 @@ def update_lasttimes():
 
 def get_cves(tt_filter:Time_Type) -> dict:
     ''' Given the headers for the API retrive CVEs from cve.circl.lu '''
-    start = datetime.datetime.now() - datetime.timedelta(days=1)
+    start = datetime.datetime.now() - datetime.timedelta(days=7)
     start_str = start.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
     end = datetime.datetime.now()
     end_str = end.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
@@ -99,13 +98,14 @@ def get_cves(tt_filter:Time_Type) -> dict:
         "time_modifier": "from",
         "time_start": now_str,
         "time_type": tt_filter.value,
-        "limit": "100",
+        "limit": "",
         "Authorization": bearer_token
     }
     """
     params = {
         "pubStartDate": start_str,
-        "pubEndDate": end_str
+        "pubEndDate": end_str,
+        "resultsPerPage": 2000
     }
 
     r = requests.get(CIRCL_LU_URL, params=params)
@@ -155,7 +155,7 @@ def filter_cves(cves: list, last_time: datetime.datetime, tt_filter: Time_Type) 
         cve_time = datetime.datetime.strptime(cve['cve'][tt_filter.value], TIME_FORMAT)
         if cve_time > last_time:
             if ALL_VALID or is_summ_keyword_present(cve['cve']['descriptions'][0]['value']) or \
-                is_prod_keyword_present(str(cve['cve']['descriptions'][0]['value'])):
+                is_prod_keyword_present(cve['cve'].get('configurations',[]).get('nodes',[])):
                 
                 filtered_cves.append(cve)
 
@@ -172,12 +172,16 @@ def is_summ_keyword_present(summary: str):
             any(w.lower() in summary.lower() for w in DESCRIPTION_KEYWORDS_I)
 
 
-def is_prod_keyword_present(products: str):
+def is_prod_keyword_present(nodes: list):
     ''' Given the summary check if any keyword is present '''
     
-    return any(w in products for w in PRODUCT_KEYWORDS) or \
-            any(w.lower() in products.lower() for w in PRODUCT_KEYWORDS_I)
-
+    for node in nodes:
+        for cpe in node['cpeMatch']:
+            criteria = cpe['criteria']
+            if any(w in criteria for w in PRODUCT_KEYWORDS) or \
+                any(w.lower() in criteria.lower() for w in PRODUCT_KEYWORDS_I):
+                return True
+    return False
 
 def search_exploits(cve: str) -> list:
     ''' Given a CVE it will search for public exploits to abuse it '''

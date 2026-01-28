@@ -1,29 +1,28 @@
 ALL_VALID: no
 
 DESCRIPTION_KEYWORDS_I:
-- privilege escalation
-- escalation
-- privesc
-- high integrity
-- elevated privilege
-- escalation of privilege
-- " sudo "
-- " suid "
-- " pe "
-- " UAC "
-- User Account Control
-- linpeas
-- winpeas
-- docker
-- kubernetes
-- " lxc "
-- podman
+#- privilege escalation
+#- escalation
+#- privesc
+#- high integrity
+#- elevated privilege
+#- escalation of privilege
+#- " sudo "
+#- " suid "
+#- " pe "
+#- " UAC "
+#- User Account Control
+#- linpeas
+#- winpeas
+#- docker
+#- kubernetes
+#- " lxc "
+#- podman
 
 DESCRIPTION_KEYWORDS:
 - ThisIsACaseSensitiveExample
 
 PRODUCT_KEYWORDS_I:
-- sudo
 - docker
 - kubernetes
 - lxc
@@ -36,6 +35,12 @@ PRODUCT_KEYWORDS_I:
 - obs
 - keepassxc
 - syncthing
+- ubuntu
+- qubesos
+- debian
+- proxmox
+- tor
+
 
 PRODUCT_KEYWORDS:
 - ThisIsACaseSensitiveExample
